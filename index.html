@@ -60,6 +60,7 @@
             gap: 5px;
             height: 30px;
             margin-bottom: 20px;
+            visibility: hidden; /* Hidden until audio starts */
         }
 
         .bar {
@@ -77,6 +78,11 @@
         @keyframes equalizerAnimation {
             0%, 100% { height: 10px; }
             50% { height: 30px; }
+        }
+
+        .start-text {
+            font-size: 16px;
+            margin-bottom: 10px;
         }
 
         .play-button {
@@ -102,8 +108,11 @@
         <div class="station">107.8 FM</div>
         <div class="live-badge">LIVE ON AIR</div>
 
+        <!-- Start Reception Message -->
+        <div class="start-text" id="startText">Click here to start reception</div>
+
         <!-- Equalizer Animation -->
-        <div class="equalizer">
+        <div class="equalizer" id="equalizer">
             <div class="bar"></div>
             <div class="bar"></div>
             <div class="bar"></div>
@@ -112,15 +121,17 @@
         </div>
 
         <!-- Play/Pause Button -->
-        <button class="play-button" id="playPauseBtn">⏸ Pause</button>
+        <button class="play-button" id="playPauseBtn">▶️ Start</button>
 
         <!-- Audio -->
-        <audio id="radioAudio" autoplay muted></audio>
+        <audio id="radioAudio"></audio>
     </div>
 
     <script>
         let audio = document.getElementById("radioAudio");
         let playPauseBtn = document.getElementById("playPauseBtn");
+        let startText = document.getElementById("startText");
+        let equalizer = document.getElementById("equalizer");
 
         // Playlist of songs
         let playlist = [
@@ -132,20 +143,18 @@
         ];
 
         let currentSongIndex = 0;
+        let isPlaying = false;
 
         // Function to play the current song
         function playSong(index) {
             audio.src = playlist[index];
-            audio.play().catch(error => console.log("Autoplay blocked: ", error));
+            audio.play().then(() => {
+                isPlaying = true;
+                equalizer.style.visibility = "visible"; // Show equalizer
+                playPauseBtn.innerHTML = "⏸ Pause";
+                startText.style.display = "none"; // Hide start text
+            }).catch(error => console.log("Playback failed: ", error));
         }
-
-        // Ensure autoplay by first muting, then unmuting
-        window.onload = function() {
-            playSong(currentSongIndex);
-            setTimeout(() => {
-                audio.muted = false; // Unmute after small delay
-            }, 1000); 
-        };
 
         // Move to the next song when the current one ends
         audio.addEventListener("ended", function() {
@@ -158,11 +167,12 @@
 
         // Toggle play/pause button
         playPauseBtn.addEventListener("click", function() {
-            if (audio.paused) {
-                audio.play();
-                playPauseBtn.innerHTML = "⏸ Pause";
+            if (!isPlaying) {
+                playSong(currentSongIndex);
             } else {
                 audio.pause();
+                isPlaying = false;
+                equalizer.style.visibility = "hidden"; // Hide equalizer
                 playPauseBtn.innerHTML = "▶️ Play";
             }
         });
