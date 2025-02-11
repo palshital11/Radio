@@ -139,9 +139,11 @@
             audio.play().catch(error => console.log("Autoplay blocked: ", error));
         }
 
-        // Auto-play first song on load
+        // Auto-play first song on load with a small delay
         window.onload = function() {
-            playSong(currentSongIndex);
+            setTimeout(() => {
+                playSong(currentSongIndex);
+            }, 500); // Small delay to avoid autoplay restrictions
         };
 
         // Move to the next song when the current one ends
