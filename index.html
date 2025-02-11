@@ -115,7 +115,7 @@
         <button class="play-button" id="playPauseBtn">⏸ Pause</button>
 
         <!-- Audio -->
-        <audio id="radioAudio"></audio>
+        <audio id="radioAudio" autoplay muted></audio>
     </div>
 
     <script>
@@ -139,11 +139,12 @@
             audio.play().catch(error => console.log("Autoplay blocked: ", error));
         }
 
-        // Auto-play first song on load with a small delay
+        // Ensure autoplay by first muting, then unmuting
         window.onload = function() {
+            playSong(currentSongIndex);
             setTimeout(() => {
-                playSong(currentSongIndex);
-            }, 500); // Small delay to avoid autoplay restrictions
+                audio.muted = false; // Unmute after small delay
+            }, 1000); 
         };
 
         // Move to the next song when the current one ends
