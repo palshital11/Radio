@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIT FM Radio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(45deg, #1e1e1e, #333);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .radio-container {
+            width: 90%;
+            max-width: 400px;
+            background: #111;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .radio-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .station {
+            font-size: 18px;
+            color: #ffcc00;
+            margin-bottom: 5px;
+        }
+
+        .live-badge {
+            background: red;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .equalizer {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            height: 30px;
+            margin-bottom: 20px;
+        }
+
+        .bar {
+            width: 6px;
+            height: 10px;
+            background: #ffcc00;
+            animation: equalizerAnimation 1s infinite;
+        }
+
+        .bar:nth-child(2) { animation-delay: 0.2s; }
+        .bar:nth-child(3) { animation-delay: 0.4s; }
+        .bar:nth-child(4) { animation-delay: 0.6s; }
+        .bar:nth-child(5) { animation-delay: 0.8s; }
+
+        @keyframes equalizerAnimation {
+            0%, 100% { height: 10px; }
+            50% { height: 30px; }
+        }
+
+        .play-button {
+            background: #ffcc00;
+            color: #111;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .play-button:active {
+            background: #ffaa00;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="radio-container">
+        <div class="radio-title">📻 VIT FM Radio</div>
+        <div class="station">107.8 FM</div>
+        <div class="live-badge">LIVE ON AIR</div>
+
+        <!-- Equalizer Animation -->
+        <div class="equalizer">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+
+        <!-- Play/Pause Button -->
+        <button class="play-button" id="playPauseBtn">⏸ Pause</button>
+
+        <!-- Audio -->
+        <audio id="radioAudio"></audio>
+    </div>
+
+    <script>
+        let audio = document.getElementById("radioAudio");
+        let playPauseBtn = document.getElementById("playPauseBtn");
+
+        // Playlist of songs
+        let playlist = [
+            "Intro.mp3",
+            "audio/song2.mp3",
+            "audio/song3.mp3",
+            "audio/song4.mp3",
+            "audio/song5.mp3"
+        ];
+
+        let currentSongIndex = 0;
+
+        // Function to play the current song
+        function playSong(index) {
+            audio.src = playlist[index];
+            audio.play().catch(error => console.log("Autoplay blocked: ", error));
+        }
+
+        // Auto-play first song on load
+        window.onload = function() {
+            playSong(currentSongIndex);
+        };
+
+        // Move to the next song when the current one ends
+        audio.addEventListener("ended", function() {
+            currentSongIndex++;
+            if (currentSongIndex >= playlist.length) {
+                currentSongIndex = 0; // Restart playlist
+            }
+            playSong(currentSongIndex);
+        });
+
+        // Toggle play/pause button
+        playPauseBtn.addEventListener("click", function() {
+            if (audio.paused) {
+                audio.play();
+                playPauseBtn.innerHTML = "⏸ Pause";
+            } else {
+                audio.pause();
+                playPauseBtn.innerHTML = "▶️ Play";
+            }
+        });
+    </script>
+
+</body>
+</html>
